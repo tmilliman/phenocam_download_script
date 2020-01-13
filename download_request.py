@@ -156,6 +156,9 @@ if __name__ == "__main__":
         # extract redirect URL using regular expressions
         redirect_regex = re.compile('window.location.href = \'(.+)\'}')
         mo = redirect_regex.search(redirect_script)
+        if mo == None:
+            sys.stderr.write('Extracting redirect url failed\n')
+            sys.exit(1)
         redirect_url = mo[1]
         redirect_url = PHENOCAM_URL + redirect_url
         # print('redirect URL: ', redirect_url)
