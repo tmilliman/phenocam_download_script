@@ -36,6 +36,7 @@ if __name__ == "__main__":
     parser.add_argument("site",help="PhenoCam site name")    
     parser.add_argument("year",type=int, help="Year")    
     parser.add_argument("month",type=int, help="Month")    
+    parser.add_argument("day",nargs='?' , type=int, help="Day")
 
     # get args
     args = parser.parse_args()
@@ -45,6 +46,8 @@ if __name__ == "__main__":
     year = args.year
     month = args.month
     
+    day = args.day
+
     # set up connection logging if verbose
     if debug:
         http_client.HTTPConnection.debuglevel = 1
@@ -58,6 +61,8 @@ if __name__ == "__main__":
         print("sitename: {}".format(sitename))
         print("year: {}".format(year))
         print("month: {}".format(month))
+        if day:
+            print("day: {}".format(day))
         print("verbose: {}".format(verbose))
         print("debug: {}".format(debug))
 
@@ -128,11 +133,19 @@ if __name__ == "__main__":
         #
         form_data['submit'] = ""
         form_data['site'] = sitename
-        start_date = "{}-{:02d}-01".format(year, month)
+
+        if day:
+            start_date = "{}-{:02d}-{:02d}".format(year, month, day)
+            end_date = "{}-{:02d}-{:02d}".format(year, month, day)
+        else: 
+            start_date = "{}-{:02d}-01".format(year, month)
+            last_day = calendar.monthrange(year, month)[1]
+            end_date = "{}-{:02d}-{:02d}".format(year, month, last_day)
+            
+
         form_data["start_date"] = start_date
-        last_day = calendar.monthrange(year, month)[1]
-        end_date = "{}-{:02d}-{:02d}".format(year, month, last_day)
         form_data["end_date"] = end_date
+
         form_data["start_time"] = "00:00"
         form_data["end_time"] = "23:59"
         form_data["ir_flag"] = ""
@@ -147,6 +160,7 @@ if __name__ == "__main__":
         r = s.post(REQUEST_URL, data=form_data)
         if verbose:
             print("status: {}".format(r.status_code))
+
 
         # parse page and get script which redirects 
         download_html = lxml.html.fromstring(r.text)
