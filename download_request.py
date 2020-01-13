@@ -16,6 +16,55 @@ PHENOCAM_URL = "https://phenocam.sr.unh.edu"
 REQUEST_URL = PHENOCAM_URL + "/webcam/network/download/"
 LOGIN_URL= PHENOCAM_URL + "/webcam/accounts/login/"
 
+def login(s, username, password):
+
+    """
+    login to phenocam website for open session s
+    """ 
+
+    if verbose:
+            print("GET request for login page")
+    response = s.get(LOGIN_URL)
+    if verbose:
+        print("status: ", response.status_code)
+    if response.status_code != 200:
+        print("error, got status: {}".format(response.status_code))
+        sys.exit(1)
+        
+
+    # grab the html from the login page
+    login_html = lxml.html.fromstring(response.text)
+
+    # get the hidden inputs
+    hidden_inputs = login_html.xpath(r'//form//input[@type="hidden"]')
+
+    # construct login form data from hidden inputs plus username
+    # and password
+    form_data = {x.attrib["name"]: x.attrib["value"] for x in hidden_inputs}
+    # print("hidden form fields: ", form_data)
+    form_data['username'] = username
+    form_data['password'] = password
+    form_data['submit'] = ""
+    form_data['next'] = REQUEST_URL
+
+    # update session referer
+    s.headers.update({'referer': LOGIN_URL})
+
+    # submit login form
+    if verbose:
+        print("POST request to login page")
+    response = s.post(LOGIN_URL, data=form_data)
+    if verbose:
+        print("status: ", response.status_code)
+
+    if response.status_code != 200:
+        print("error, got status: {}".format(response.status_code))
+        sys.exit(1)
+
+    return
+
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
@@ -36,7 +85,10 @@ if __name__ == "__main__":
     parser.add_argument("site",help="PhenoCam site name")    
     parser.add_argument("year",type=int, help="Year")    
     parser.add_argument("month",type=int, help="Month")    
-    parser.add_argument("day",nargs='?' , type=int, help="Day")
+    parser.add_argument("day", nargs='?', type=int,
+                        default=None,
+                        help="""optional day of Month, if omitted include 
+                        entire  month""")
 
     # get args
     args = parser.parse_args()
@@ -45,7 +97,6 @@ if __name__ == "__main__":
     sitename = args.site
     year = args.year
     month = args.month
-    
     day = args.day
 
     # set up connection logging if verbose
@@ -61,7 +112,7 @@ if __name__ == "__main__":
         print("sitename: {}".format(sitename))
         print("year: {}".format(year))
         print("month: {}".format(month))
-        if day:
+        if day is not None:
             print("day: {}".format(day))
         print("verbose: {}".format(verbose))
         print("debug: {}".format(debug))
@@ -77,39 +128,12 @@ if __name__ == "__main__":
         sys.stderr.write('Set password in PHENOCAM_PASSWD env var\n')
         sys.exit(1)
 
-    # open a web session and login
+    # open a web session
     with requests.session() as s:
-        if verbose:
-            print("GET request for login page")
-        response = s.get(LOGIN_URL)
-        if verbose:
-            print("status: ", response.status_code)
 
-        # grab the html from the login page
-        login_html = lxml.html.fromstring(response.text)
-    
-        # get the hidden inputs
-        hidden_inputs = login_html.xpath(r'//form//input[@type="hidden"]')
-
-        # construct login form data from hidden inputs plus username
-        # and password
-        form_data = {x.attrib["name"]: x.attrib["value"] for x in hidden_inputs}
-        # print("hidden form fields: ", form_data)
-        form_data['username'] = username
-        form_data['password'] = password
-        form_data['submit'] = ""
-        form_data['next'] = REQUEST_URL
-
-        # update session referer
-        s.headers.update({'referer': LOGIN_URL})
-    
-        # submit login form
-        if verbose:
-            print("POST request to login page")
-        response = s.post(LOGIN_URL, data=form_data)
-        if verbose:
-            print("status: ", response.status_code)
-
+        # log session in as user
+        login(s, username, password)
+        
         # get download form page
         if verbose:
             print("GET request to download page")
@@ -188,9 +212,7 @@ if __name__ == "__main__":
             # Content-Disposition: attachment; filename*=UTF-8''alligatorriver_phenocam_data_20200110180648.zip
             # 
             cdisposition = r.headers['Content-Disposition']
+
             outfile = cdisposition.split('\'')[2]
             with open(outfile, 'wb') as f:
-                # for chunk in r.iter_content(chunk_size=8192):
-                #     if chunk:
-                #         f.write(chunk)
                 shutil.copyfileobj(r.raw, f)
