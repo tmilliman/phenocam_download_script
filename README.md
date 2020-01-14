@@ -1,4 +1,5 @@
 # phenocam_download_script
+
 Simple python script to automate image downloads.
 
     usage: download_request.py [-h] [-v] [-d] site year month [day]
@@ -9,7 +10,7 @@ Simple python script to automate image downloads.
       site           PhenoCam site name
       year           Year
       month          Month
-      day            optional day of Month, if omitted include entire month
+      day            optional day of Month, if omitted include download month
     
     optional arguments:
       -h, --help     show this help message and exit
