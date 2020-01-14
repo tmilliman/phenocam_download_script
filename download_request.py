@@ -68,7 +68,8 @@ def login(s, username, password):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Download PhenoCam Images for a Site, Year, Month")
+        description=("Download PhenoCam Images for a site, year, " +
+                     "month (and optionally day of month)"))
     
     # options
     parser.add_argument("-v","--verbose",
@@ -87,8 +88,8 @@ if __name__ == "__main__":
     parser.add_argument("month",type=int, help="Month")    
     parser.add_argument("day", nargs='?', type=int,
                         default=None,
-                        help="""optional day of Month, if omitted include 
-                        entire  month""")
+                        help=("optional day of Month, if omitted " +
+                              "download entire month"))
 
     # get args
     args = parser.parse_args()
