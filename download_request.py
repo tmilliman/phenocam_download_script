@@ -122,8 +122,6 @@ if __name__ == "__main__":
               "be between 1 and {}.".format(last_dom))
         sys.exit(1)
 
-    sys.exit(0)
-              
     # set up connection logging if verbose
     if debug:
         http_client.HTTPConnection.debuglevel = 1
