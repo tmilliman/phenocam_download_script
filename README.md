@@ -10,7 +10,7 @@ Simple python script to automate image downloads.
       site           PhenoCam site name
       year           Year
       month          Month
-      day            optional day of Month, if omitted include download month
+      day            optional day of Month, if omitted download entire month
     
     optional arguments:
       -h, --help     show this help message and exit
