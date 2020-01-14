@@ -117,7 +117,7 @@ if __name__ == "__main__":
         sys.exit(1)
         
     last_dom = calendar.monthrange(year, month)[1]
-    if day < 1 or day > last_dom:
+    if day is not None and day < 1 or day > last_dom:
         print("for {}-{:02d} the day of month should ".format(year, month),
               "be between 1 and {}.".format(last_dom))
         sys.exit(1)
@@ -209,10 +209,17 @@ if __name__ == "__main__":
         if verbose:
             print("status: {}".format(r.status_code))
 
+        # check response text for error
+        if r.text.find('No files matching') >= 0:
+            print("No files matching these criteria were found.")
+            sys.exit(0)
+            
         # parse page and get script which redirects 
         download_html = lxml.html.fromstring(r.text)
         scripts = download_html.xpath(r'//script')
+        
         redirect_script = scripts[3].text
+        
 
         # extract redirect URL using regular expressions
         redirect_regex = re.compile('window.location.href = \'(.+)\'}')
