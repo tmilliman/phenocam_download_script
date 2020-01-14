@@ -14,7 +14,7 @@ import http.client as http_client
 import argparse
 import json
 
-PHENOCAM_URL = "https://leaf.sr.unh.edu"
+PHENOCAM_URL = "https://phenocam.sr.unh.edu"
 REQUEST_URL = PHENOCAM_URL + "/webcam/network/download/"
 LOGIN_URL= PHENOCAM_URL + "/webcam/accounts/login/"
 
