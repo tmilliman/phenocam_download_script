@@ -107,8 +107,8 @@ if __name__ == "__main__":
     parser.add_argument("month",type=int, help="Month [1-12]")    
     parser.add_argument("day", nargs='?', type=int,
                         default=None,
-                        help="""optional day of Month, if omitted include 
-                        entire  month""")
+                        help=("optional day of Month, if omitted " +
+                              "download entire month"))
 
     # get args
     args = parser.parse_args()
