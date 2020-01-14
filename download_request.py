@@ -104,7 +104,7 @@ if __name__ == "__main__":
     day = args.day
 
     # check arguments
-    caminfo = camera_info(sitename)
+    # caminfo = camera_info(sitename)
               
     year_first = 2000
     year_last = datetime.date.today().year
