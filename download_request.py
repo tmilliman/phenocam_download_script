@@ -18,22 +18,6 @@ PHENOCAM_URL = "https://leaf.sr.unh.edu"
 REQUEST_URL = PHENOCAM_URL + "/webcam/network/download/"
 LOGIN_URL= PHENOCAM_URL + "/webcam/accounts/login/"
 
-def camera_info(sitename):
-    """
-    get camera info
-    """
-    info_url = PHENOCAM_URL + "/api/cameras/?Sitename__iexact={}".format(
-        sitename)
-    r = requests.get(info_url)
-    api_json = json.loads(r.text.replace('null','\"\"'))
-    
-    if verbose:
-        print(api_json)
-        date_first = api_json['results'][0]['date_first']
-        print("First Date: {}".format(date_first))
-
-    return camera_info
-
 def login(s, username, password):
 
     """
