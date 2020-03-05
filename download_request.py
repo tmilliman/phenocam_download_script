@@ -2,7 +2,6 @@
 
 import os
 import sys
-import time
 import calendar
 import datetime
 import shutil
@@ -12,27 +11,26 @@ import logging
 import re
 import http.client as http_client
 import argparse
-import json
 
 PHENOCAM_URL = "https://phenocam.sr.unh.edu"
 REQUEST_URL = PHENOCAM_URL + "/webcam/network/download/"
-LOGIN_URL= PHENOCAM_URL + "/webcam/accounts/login/"
+LOGIN_URL = PHENOCAM_URL + "/webcam/accounts/login/"
+
 
 def login(s, username, password):
 
     """
     login to phenocam website for open session s
-    """ 
+    """
 
     if verbose:
-            print("GET request for login page")
+        print("GET request for login page")
     response = s.get(LOGIN_URL)
     if verbose:
         print("status: ", response.status_code)
     if response.status_code != 200:
         print("error, got status: {}".format(response.status_code))
         sys.exit(1)
-        
 
     # grab the html from the login page
     login_html = lxml.html.fromstring(response.text)
@@ -66,29 +64,28 @@ def login(s, username, password):
     return
 
 
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description=("Download PhenoCam Images for a site, year, month" +
                      " and optionally day-of-month.")
     )
-    
+
     # options
-    parser.add_argument("-v","--verbose",
+    parser.add_argument("-v", "--verbose",
                         help="increase output verbosity",
                         action="store_true",
                         default=False)
 
-    parser.add_argument("-d","--debug",
+    parser.add_argument("-d", "--debug",
                         help="log connections for debugging",
                         action="store_true",
                         default=False)
 
     # positional arguments
-    parser.add_argument("site",help="PhenoCam site name")    
-    parser.add_argument("year",type=int, help="Year [2000-present year]")    
-    parser.add_argument("month",type=int, help="Month [1-12]")    
+    parser.add_argument("site", help="PhenoCam site name")
+    parser.add_argument("year", type=int, help="Year [2000-present year]")
+    parser.add_argument("month", type=int, help="Month [1-12]")
     parser.add_argument("day", nargs='?', type=int,
                         default=None,
                         help=("optional day of Month, if omitted " +
@@ -105,7 +102,7 @@ if __name__ == "__main__":
 
     # check arguments
     # caminfo = camera_info(sitename)
-              
+
     year_first = 2000
     year_last = datetime.date.today().year
     if year < year_first or year > year_last:
@@ -115,9 +112,9 @@ if __name__ == "__main__":
     if month < 1 or month > 12:
         print("month should be an integer in the range 1-12.")
         sys.exit(1)
-        
+
     last_dom = calendar.monthrange(year, month)[1]
-    if day is not None and day < 1 or day > last_dom:
+    if (day is not None) and (day < 1 or day > last_dom):
         print("for {}-{:02d} the day of month should ".format(year, month),
               "be between 1 and {}.".format(last_dom))
         sys.exit(1)
@@ -140,7 +137,6 @@ if __name__ == "__main__":
         print("verbose: {}".format(verbose))
         print("debug: {}".format(debug))
 
-
     # get phenocam user and password from
     # environment variables
     username = os.getenv('PHENOCAM_USER')
@@ -157,7 +153,7 @@ if __name__ == "__main__":
 
         # log session in as user
         login(s, username, password)
-        
+
         # get download form page
         if verbose:
             print("GET request to download page")
@@ -167,7 +163,7 @@ if __name__ == "__main__":
 
         # grab the html from the download page
         download_html = lxml.html.fromstring(response.text)
-    
+
         # get the hidden inputs
         hidden_inputs = download_html.xpath(r'//form//input[@type="hidden"]')
 
@@ -185,11 +181,10 @@ if __name__ == "__main__":
         if day:
             start_date = "{}-{:02d}-{:02d}".format(year, month, day)
             end_date = "{}-{:02d}-{:02d}".format(year, month, day)
-        else: 
+        else:
             start_date = "{}-{:02d}-01".format(year, month)
             last_day = calendar.monthrange(year, month)[1]
             end_date = "{}-{:02d}-{:02d}".format(year, month, last_day)
-            
 
         form_data["start_date"] = start_date
         form_data["end_date"] = end_date
@@ -199,7 +194,7 @@ if __name__ == "__main__":
         form_data["ir_flag"] = ""
 
         # print("form data: ", form_data)
-    
+
         # update session referer
         s.headers.update({'referer': REQUEST_URL})
 
@@ -213,13 +208,12 @@ if __name__ == "__main__":
         if r.text.find('No files matching') >= 0:
             print("No files matching these criteria were found.")
             sys.exit(0)
-            
-        # parse page and get script which redirects 
+
+        # parse page and get script which redirects
         download_html = lxml.html.fromstring(r.text)
         scripts = download_html.xpath(r'//script')
-        
+
         redirect_script = scripts[3].text
-        
 
         # extract redirect URL using regular expressions
         redirect_regex = re.compile('window.location.href = \'(.+)\'}')
@@ -231,7 +225,6 @@ if __name__ == "__main__":
         redirect_url = PHENOCAM_URL + redirect_url
         # print('redirect URL: ', redirect_url)
 
-    
         # get URL as a data stream
         with s.get(redirect_url, stream=True,
                    allow_redirects=False) as r:
@@ -240,7 +233,7 @@ if __name__ == "__main__":
             #
             # e.g.
             # Content-Disposition: attachment; filename*=UTF-8''alligatorriver_phenocam_data_20200110180648.zip
-            # 
+            #
             cdisposition = r.headers['Content-Disposition']
 
             outfile = cdisposition.split('\'')[2]
