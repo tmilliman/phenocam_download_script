@@ -82,6 +82,11 @@ if __name__ == "__main__":
                         action="store_true",
                         default=False)
 
+    parser.add_argument("-i", "--infrared",
+                        help="get infrared images only",
+                        action="store_true",
+                        default=False)
+
     # positional arguments
     parser.add_argument("site", help="PhenoCam site name")
     parser.add_argument("year", type=int, help="Year [2000-present year]")
@@ -95,6 +100,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     verbose = args.verbose
     debug = args.debug
+    infrared = args.infrared
     sitename = args.site
     year = args.year
     month = args.month
@@ -136,6 +142,7 @@ if __name__ == "__main__":
             print("day: {}".format(day))
         print("verbose: {}".format(verbose))
         print("debug: {}".format(debug))
+        print("infrared: {}".format(infrared))
 
     # get phenocam user and password from
     # environment variables
@@ -191,7 +198,7 @@ if __name__ == "__main__":
 
         form_data["start_time"] = "00:00"
         form_data["end_time"] = "23:59"
-        form_data["ir_flag"] = ""
+        form_data["ir_flag"] = infrared
 
         # print("form data: ", form_data)
 
