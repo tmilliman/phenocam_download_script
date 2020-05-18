@@ -24,6 +24,6 @@ The script reads two environment variables:
     PHENOCAM_PASSWD
 
 which provide the login credentials for initiating the download.  As
-with the download tool on the web, site downloads are limited to 2GB
+with the download tool on the web site, downloads are limited to 2GB
 but for most sites this is sufficient to download a month's worth of
 data.
