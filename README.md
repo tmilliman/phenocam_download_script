@@ -13,9 +13,9 @@ Simple python script to automate image downloads.
       day            optional day of Month, if omitted download entire month
     
     optional arguments:
-      -h, --help     show this help message and exit
-      -v, --verbose  increase output verbosity
-      -d, --debug    log connections for debugging
+      -h, --help      show this help message and exit
+      -v, --verbose   increase output verbosity
+      -d, --debug     log connections for debugging
       -i, --infrared  get infrared images only
 
 The script reads two environment variables:
