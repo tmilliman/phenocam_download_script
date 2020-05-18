@@ -19,8 +19,8 @@ Simple python script to automate image downloads.
 
 The script reads two environment variables:
 
-PHENOCAM_USER
-PHENOCAM_PASSWD
+    PHENOCAM_USER
+    PHENOCAM_PASSWD
 
 which provide the login credentials for initiating the download.  As
 with the download tool on the web site downloads are limited to 2GB
