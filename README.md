@@ -13,8 +13,17 @@ Simple python script to automate image downloads.
       day            optional day of Month, if omitted download entire month
     
     optional arguments:
-      -h, --help     show this help message and exit
-      -v, --verbose  increase output verbosity
-      -d, --debug    log connections for debugging
+      -h, --help      show this help message and exit
+      -v, --verbose   increase output verbosity
+      -d, --debug     log connections for debugging
+      -i, --infrared  get infrared images only
 
+The script reads two environment variables:
 
+    PHENOCAM_USER
+    PHENOCAM_PASSWD
+
+which provide the login credentials for initiating the download.  As
+with the download tool on the web site, downloads are limited to 2GB
+but for most sites this is sufficient to download a month's worth of
+data.
