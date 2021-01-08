@@ -17,7 +17,7 @@ REQUEST_URL = PHENOCAM_URL + "/webcam/network/download/"
 LOGIN_URL = PHENOCAM_URL + "/webcam/accounts/login/"
 
 
-def login(s, username, password):
+def login(s, username, password, verbose=False):
 
     """
     login to phenocam website for open session s
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     with requests.session() as s:
 
         # log session in as user
-        login(s, username, password)
+        login(s, username, password, verbose=verbose)
 
         # get download form page
         if verbose:
@@ -169,7 +169,7 @@ if __name__ == "__main__":
             print("status: ", response.status_code)
 
         # grab the html from the download page
-        download_html = lxml.html.fromstring(response.text)
+        download_html = lxml.html.fromstring(response.content)
 
         # get the hidden inputs
         hidden_inputs = download_html.xpath(r'//form//input[@type="hidden"]')
@@ -217,11 +217,12 @@ if __name__ == "__main__":
             sys.exit(0)
 
         # parse page and get script which redirects
-        download_html = lxml.html.fromstring(r.text)
+        download_html = lxml.html.fromstring(r.content)
         scripts = download_html.xpath(r'//script')
-        print(scripts)
-        
-        redirect_script = scripts[2].text
+
+        # redirect script should be last script tag
+        lasttag = len(scripts) - 1
+        redirect_script = scripts[lasttag].text
 
         # extract redirect URL using regular expressions
         redirect_regex = re.compile('window.location.href = \'(.+)\'}')
