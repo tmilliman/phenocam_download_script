@@ -8,5 +8,5 @@ dependencies:
   - requests
   - urllib3
   - lxml
-prefix: /Users/tmilliman/miniconda3/envs/phenocam_download
+
 

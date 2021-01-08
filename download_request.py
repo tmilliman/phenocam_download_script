@@ -25,7 +25,7 @@ def login(s, username, password):
 
     if verbose:
         print("GET request for login page")
-    response = s.get(LOGIN_URL)
+    response = s.get(LOGIN_URL, timeout=3)
     if verbose:
         print("status: ", response.status_code)
     if response.status_code != 200:
@@ -53,7 +53,7 @@ def login(s, username, password):
     # submit login form
     if verbose:
         print("POST request to login page")
-    response = s.post(LOGIN_URL, data=form_data)
+    response = s.post(LOGIN_URL, data=form_data, timeout=3)
     if verbose:
         print("status: ", response.status_code)
 
@@ -219,8 +219,9 @@ if __name__ == "__main__":
         # parse page and get script which redirects
         download_html = lxml.html.fromstring(r.text)
         scripts = download_html.xpath(r'//script')
-
-        redirect_script = scripts[3].text
+        print(scripts)
+        
+        redirect_script = scripts[2].text
 
         # extract redirect URL using regular expressions
         redirect_regex = re.compile('window.location.href = \'(.+)\'}')
@@ -234,7 +235,7 @@ if __name__ == "__main__":
 
         # get URL as a data stream
         with s.get(redirect_url, stream=True,
-                   allow_redirects=False) as r:
+                   allow_redirects=False, timeout=3) as r:
 
             # the Content-Disposition header contains the filename
             #
