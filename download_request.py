@@ -15,7 +15,7 @@ import argparse
 PHENOCAM_URL = "https://phenocam.sr.unh.edu"
 REQUEST_URL = PHENOCAM_URL + "/webcam/network/download/"
 LOGIN_URL = PHENOCAM_URL + "/webcam/accounts/login/"
-
+REQ_TIMEOUT = 3
 
 def login(s, username, password, verbose=False):
 
@@ -25,7 +25,7 @@ def login(s, username, password, verbose=False):
 
     if verbose:
         print("GET request for login page")
-    response = s.get(LOGIN_URL, timeout=3)
+    response = s.get(LOGIN_URL, timeout=REQ_TIMEOUT)
     if verbose:
         print("status: ", response.status_code)
     if response.status_code != 200:
@@ -53,7 +53,7 @@ def login(s, username, password, verbose=False):
     # submit login form
     if verbose:
         print("POST request to login page")
-    response = s.post(LOGIN_URL, data=form_data, timeout=3)
+    response = s.post(LOGIN_URL, data=form_data, timeout=REQ_TIMEOUT)
     if verbose:
         print("status: ", response.status_code)
 
@@ -236,7 +236,7 @@ if __name__ == "__main__":
 
         # get URL as a data stream
         with s.get(redirect_url, stream=True,
-                   allow_redirects=False, timeout=3) as r:
+                   allow_redirects=False, timeout=REQ_TIMEOUT) as r:
 
             # the Content-Disposition header contains the filename
             #
