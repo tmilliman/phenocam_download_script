@@ -12,7 +12,7 @@ import re
 import http.client as http_client
 import argparse
 
-PHENOCAM_URL = "https://phenocam.sr.unh.edu"
+PHENOCAM_URL = "https://phenocam.nau.edu"
 REQUEST_URL = PHENOCAM_URL + "/webcam/network/download/"
 LOGIN_URL = PHENOCAM_URL + "/webcam/accounts/login/"
 REQ_TIMEOUT = 3
